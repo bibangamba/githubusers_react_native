@@ -1,85 +1,46 @@
-import React, { Component } from "react";
-import { View, Image, StyleSheet, AsyncStorage } from "react-native";
+import React from "react";
+import { View, Text, FlatList } from "react-native";
+import { Query } from "react-apollo";
+import { LAGOS_JAVA_DEVS_QUERY } from "../../queries/LagosJavaDevs";
+import ListItemComponent from "./ListItemComponent/ListItemComponent";
 
-const styles = StyleSheet.create({
-  viewContainer: {
-    flex: 1,
-    paddingTop: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    height: "100%",
-    flexDirection: "column"
-  },
-  fieldContainer: {
-    marginTop: 100,
-    width: "100%",
-    paddingRight: 32,
-    paddingLeft: 32,
-    paddingBottom: 12
-  },
-  textInput: {
-    borderColor: "black",
-    borderRadius: 4,
-    padding: 4,
-    height: 40,
-    paddingLeft: 12,
-    marginBottom: 30,
-    borderColor: "#000",
-    borderWidth: 1,
-    fontSize: 16
-  },
-  githubLogo: {
-    width: 185,
-    height: 185
-  },
-  signinButton: {
-    marginTop: 10,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "#5382A1",
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#fff"
-  },
-  signinText: {
-    color: "#fff",
-    textAlign: "center",
-    paddingLeft: 10,
-    paddingRight: 10,
-    fontSize: 24
-  }
-});
+const UsersListScreen = props => (
+  <Query query={LAGOS_JAVA_DEVS_QUERY}>
+    {({ loading, error, data }) => {
+      if (loading) return <Text>Loading...</Text>;
+      if (error) return <Text>Error :( {error.message}</Text>;
 
-class UsersListScren extends Component {
-  constructor(props) {
-    super(props);
-  }
+      const developersArray = data.search.edges.map(element => {
+        element["avatarUrl"] = element["node"]["avatarUrl"];
+        element["bio"] = element["node"]["bio"];
+        element["id"] = element["node"]["id"];
+        element["username"] = element["node"]["login"];
+        element["name"] = element["node"]["name"];
+        element["url"] = element["node"]["url"];
+        element["repos"] = element["node"]["repositories"]["totalCount"];
+        element["starred"] =
+          element["node"]["starredRepositories"]["totalCount"];
+        delete element["node"];
+        return element;
+      });
+      const { navigation } = props;
+      return (
+        <View style={{ marginBottom: 8 }}>
+          <FlatList
+            keyExtractor={developer => developer.id}
+            data={developersArray}
+            renderItem={developer => (
+              <ListItemComponent
+                key={developer.index}
+                developer={developer}
+                navigation={navigation}
+              />
+            )}
+          />
+        </View>
+      );
+    }}
+  </Query>
+);
 
-  state = {
-    access_token: "",
-    error: ""
-  };
-
-  componentDidMount() {
-    AsyncStorage.getItem("access_token")
-      .then(token => {
-        this.setState({ access_token: token });
-        console.log("this.setState ===> ", token);
-      })
-      .catch(error => console.log("Error retrieving data ", error));
-  }
-
-  render() {
-    return (
-      <View style={styles.viewContainer}>
-        <Image
-          style={styles.githubLogo}
-          source={require("../../../assets/github.png")}
-        />
-      </View>
-    );
-  }
-}
-
-export default UsersListScren;
+export default UsersListScreen;

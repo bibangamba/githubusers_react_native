@@ -33,19 +33,28 @@ class LoginScreen extends Component {
 
   onSubmit = () => {
     const { username, password } = this.state;
-    githubLogin(username, password).then(result => {
-      console.log("RESULT from auth fetch: ", result);
+    const { navigation, screenProps } = this.props;
 
-      if (typeof result === "object" && result !== null) {
-        console.log("############ got an error: ", result["error"]);
-      }
+    githubLogin(username, password)
+      .then(result => {
+        console.log("RESULT from auth fetch ====> ", result);
 
-      AsyncStorage.setItem("access_token", result)
-        .then(() => console.log("// saved data to async storage"))
-        .catch(error => console.log("// Error saving data ", error));
-      const { navigation } = this.props;
-      navigation.navigate("UsersList");
-    });
+        if (typeof result === "object" && result !== null) {
+          console.log("############ got an error: ", result["error"]);
+        }
+
+        if (result) {
+          AsyncStorage.setItem("access_token", result)
+            .then(() => {
+              screenProps.setAccessTokenInToState(result);
+              navigation.navigate("UsersList");
+            })
+            .catch(error => console.log("// Error saving data ===> ", error));
+        }
+      })
+      .catch(error =>
+        console.log("error occured during http request ===>", error)
+      );
   };
 
   render() {
