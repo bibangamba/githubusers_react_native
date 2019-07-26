@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Image, TouchableOpacity, Text } from "react-native";
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  Text,
+  Share,
+  Platform
+} from "react-native";
 import styles from "./DetailsScreen.style";
 const DetailsScreen = props => {
   const {
@@ -9,7 +16,23 @@ const DetailsScreen = props => {
     url,
     username
   } = props.navigation.state.params;
+  const dialogTitle = `Share @${username}'s profile`;
+  const message = `Check out this awesome developer @${username}, ${url}.`;
+  let shareOptions = {};
+  if (Platform.OS === "android") {
+    shareOptions["dialogTitle"] = dialogTitle;
+  }
+  const shareProfile = username => {
+    Share.share(
+      {
+        message: message,
+        title: dialogTitle
+      },
+      shareOptions
+    );
+  };
   const { navigate } = props.navigation;
+
   return (
     <View style={styles.viewContainer}>
       <Image style={styles.avatar} source={{ uri: avatarUrl }} />
@@ -30,7 +53,7 @@ const DetailsScreen = props => {
           <Text style={styles.counterLabelText}>starred</Text>
         </View>
       </View>
-      <TouchableOpacity style={styles.shareButton} onPress={this.shareProfile}>
+      <TouchableOpacity style={styles.shareButton} onPress={shareProfile}>
         <Text style={styles.shareText}>SHARE</Text>
       </TouchableOpacity>
     </View>
