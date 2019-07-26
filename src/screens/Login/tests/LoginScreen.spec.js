@@ -1,4 +1,4 @@
-import { shallow, mount, render } from "enzyme";
+import { shallow } from "enzyme";
 import LoginScreen from "../LoginScreen";
 
 import React from "react";
@@ -47,17 +47,4 @@ describe("Test LoginScreen", () => {
     expect(instanceOfLoginScreen.state.username).toEqual(mock_username);
     expect(instanceOfLoginScreen.state.password).toEqual(mock_password);
   });
-
-  //   it("should change state when text input values change", () => {
-  //     const loginScreen = mount(<LoginScreen />);
-  //     console.log(loginScreen);
-  //     const usernameInput = loginScreen.find(input).at(0);
-  //     const passwordInput = loginScreen.find(input).at(1);
-  //     usernameInput.instance().value = mock_username;
-  //     usernameInput.simulate("change");
-  //     passwordInput.instance().value = mock_password;
-  //     passwordInput.simulate("change");
-  //     expect(loginScreen.state().username).toEqual(mock_username);
-  //     expect(loginScreen.state().password).toEqual(mock_password);
-  //   });
 });

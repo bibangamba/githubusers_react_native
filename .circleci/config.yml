@@ -12,6 +12,13 @@ jobs:
           name: install dependencies
           command: npm install
       - run:
+          name: create and fill .env file
+          command: |
+            echo "REACT_APP_GITHUB_APP_CLIENT_ID='$REACT_APP_GITHUB_APP_CLIENT_ID'" >> .env
+            echo "REACT_APP_GITHUB_APP_CLIENT_SECRET='$REACT_APP_GITHUB_APP_CLIENT_SECRET'" >> .env
+            echo "REACT_ENV_GITHUB_APP_CLIENT_ID='$REACT_ENV_GITHUB_APP_CLIENT_ID'" >> .env
+            echo "REACT_ENV_GITHUB_APP_CLIENT_SECRET='$REACT_ENV_GITHUB_APP_CLIENT_SECRET'" >> .env
+      - run:
           name: download code climate test-reporter
           command: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
