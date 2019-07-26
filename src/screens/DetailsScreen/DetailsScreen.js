@@ -9,11 +9,15 @@ const DetailsScreen = props => {
     url,
     username
   } = props.navigation.state.params;
+  const { navigate } = props.navigation;
   return (
     <View style={styles.viewContainer}>
       <Image style={styles.avatar} source={{ uri: avatarUrl }} />
       <Text style={styles.usernameText}>{username}</Text>
-      <TouchableOpacity style={styles.githubUrlLink} onPress={this.openBrowser}>
+      <TouchableOpacity
+        style={styles.githubUrlLink}
+        onPress={() => navigate("WebViewScreen", url)}
+      >
         <Text style={styles.urlText}>{url}</Text>
       </TouchableOpacity>
       <View style={styles.countersContainer}>
